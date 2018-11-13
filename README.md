@@ -1,5 +1,9 @@
 ![cf](http://i.imgur.com/7v5ASc8.png) Access Control (ACL)
 ==========================================================
+## Heroku
+
+## Travis
+
 
 ## Submission Instructions
   * Follow the instructions in the "Lab Instructions" documentation in the reference folder of the class repository
