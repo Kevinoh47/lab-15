@@ -4,11 +4,18 @@ import User from './model.js';
 
 export default (capability) => {
 
+  console.log('INPUT CAPABILITY REGISTERED ON SERVER STARTUP: ', capability);
+
   return (req, res, next) => {
+
+    console.log('INPUT CAPABILITY INSIDE MY RETURNED MIDDLEWARE: ', capability);
 
     try {
 
       let [authType, authString] = req.headers.authorization.split(/\s+/);
+
+      console.log('MIDDLEWARE.JS authType: ', authType);
+      console.log('MIDDLEWARE.JS authString: ', authString);
 
       // BASIC Auth  ... Authorization:Basic ZnJlZDpzYW1wbGU=
       // BEARER Auth ... Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI
@@ -33,7 +40,10 @@ export default (capability) => {
       let auth = {username,password};  // {username:"john", password:"mysecret"}
 
       return User.authenticateBasic(auth)
-        .then( user => _authenticate(user) );
+        .then( user => {
+          console.log('MIDDLEWARE.JS _authBasic - user: ', user);
+          _authenticate(user) 
+        });
     }
 
     function _authBearer(authString) {
@@ -42,7 +52,9 @@ export default (capability) => {
     }
 
     function _authenticate(user) {
-      if ( user ) {
+      console.log('MIDDLEWARE.JS _authenticate user: ', user);
+      if ( user && (!capability) || user.can(capability)) { 
+      // if ( user && (!capability) ) { // TODO remove
         req.user = user;
         req.token = user.generateToken();
         next();

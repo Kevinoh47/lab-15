@@ -139,7 +139,7 @@ describe('Auth Middleware', () => {
           expect(next).toHaveBeenCalledWith(errorObject);
         });
 
-    }); // it()
+    }); 
 
     it('grants access when a user has permission', () => {
 
@@ -157,8 +157,8 @@ describe('Auth Middleware', () => {
           expect(next).toHaveBeenCalledWith();
         });
 
-    }); // it()
+    }); 
 
-  }); // describe()
+  });
     
 });

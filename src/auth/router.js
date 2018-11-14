@@ -21,7 +21,10 @@ authRouter.post('/signup', (req, res, next) => {
 });
 
 authRouter.post('/signin', auth(), (req, res, next) => {
+
+  console.log('ROUTER.JS signin - req.token: ', req.token );
   res.cookie('auth', req.token);
+  // res.cookie('auth', req.token, {domain:process.env.CLIENT_DOMAIN}); // TODO: should clint domain be localhost?
   res.send(req.token);
 });
 

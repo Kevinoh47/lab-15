@@ -30,15 +30,15 @@ app.use(authRouter);
 app.use(apiRouter);
 
 app.get('/', auth(), (req,res) => {
-  res.send('hi');
+  res.send('home route -- anyone with an auth can access this route.');
 });
 
 app.get('/s', auth('create'), (req,res) => {
-  res.send('hi');
+  res.send('creating/saving something...');
 });
 
 app.get('/d', auth('delete'), (req,res) => {
-  res.send('hi');
+  res.send('deleting something... ');
 });
 
 // Catchalls
