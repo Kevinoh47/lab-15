@@ -1,9 +1,10 @@
 ![cf](http://i.imgur.com/7v5ASc8.png) Access Control (ACL)
 ==========================================================
 ## Heroku
+https://codefellows-401-lab15.herokuapp.com/
 
 ## Travis
-
+[![Build Status](https://travis-ci.com/Kevinoh47/lab-15.svg?branch=working15)](https://travis-ci.com/Kevinoh47/lab-15)
 
 ## Submission Instructions
   * Follow the instructions in the "Lab Instructions" documentation in the reference folder of the class repository
