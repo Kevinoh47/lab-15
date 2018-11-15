@@ -1,21 +1,50 @@
 'use strict';
 
 import mongoose from 'mongoose';
+require('mongoose-schema-jsonschema')(mongoose);
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-const userSchema = new mongoose.Schema({
+// TODO should this be new mongoose.Schema?
+const roleCapabilities = mongoose.Schema(
+  {
+  role: {type: String, required: true, unique: true,  enum:['user','editor','admin']},
+  roleCapabilities: {type: Array},
+  }, 
+  { 
+    toObject:{virtuals:true}, 
+    toJSON:{virtuals:true},
+  }
+);
+
+// TODO should this be new mongoose.Schema?
+const userSchema = mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   email: {type: String},
   role: {type: String, default:'user', enum:['user','editor','admin']}
+},
+{
+  toObject:{virtuals:true},
+  toJSON:{virtuals:true},
 });
 
-const capabilities = {
-  user: ['read'],
-  editor: ['create', 'read', 'update'],
-  admin: [ 'create', 'read', 'update', 'delete'],
-}
+userSchema.virtual('roleCapabilities',{
+  ref: 'roleCapabilities',
+  localField: 'role',
+  foreignField: 'role',
+  justOne: true,
+});
+
+userSchema.pre('find', function() {
+  try {
+    this.populate('roleCapabilities');
+    console.log("MODEL.JS FINDING ROLE CAPABILITIES FOR THE USER: ", this);
+  }
+  catch (e) {
+    console.error(e);
+  }
+});
 
 userSchema.pre('save', function(next) {
   bcrypt.hash(this.password,10)
@@ -27,9 +56,9 @@ userSchema.pre('save', function(next) {
 });
 
 // TODO see video ~46:00
-userSchema.methods.can = function(capability) {
-  return capabilities[this.role].includes(capability);
-};
+// userSchema.methods.can = function(capability) {
+//   return capabilities[this.role].includes(capability);
+// };
 
 userSchema.statics.createFromOAuth = function(incoming) {
 
@@ -88,7 +117,8 @@ userSchema.methods.comparePassword = function(password) {
 userSchema.methods.generateToken = function() {
   let tokenData = {
     id:this._id,
-    capabilitites: capabilities[this.role],
+    role:this.role,
+    capabilities:this.userCapabilities,
   };
   return jwt.sign(tokenData, process.env.SECRET || 'changeit' );
 };

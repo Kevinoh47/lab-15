@@ -52,8 +52,8 @@ export default (capability) => {
     }
 
     function _authenticate(user) {
-      console.log('MIDDLEWARE.JS _authenticate user: ', user);
-      if ( user && (!capability) || user.can(capability)) { 
+      console.log('MIDDLEWARE.JS')
+      if ((user && (!capability)) || (user.roleCapabilities && user.roleCapabilities.includes(capability))) { 
       // if ( user && (!capability) ) { // TODO remove
         req.user = user;
         req.token = user.generateToken();
