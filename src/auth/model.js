@@ -5,43 +5,32 @@ require('mongoose-schema-jsonschema')(mongoose);
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-// TODO should this be new mongoose.Schema?
-const roleCapabilities = mongoose.Schema(
-  {
-  role: {type: String, required: true, unique: true,  enum:['user','editor','admin']},
-  roleCapabilities: {type: Array},
-  }, 
-  { 
-    toObject:{virtuals:true}, 
-    toJSON:{virtuals:true},
-  }
-);
 
-// TODO should this be new mongoose.Schema?
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   email: {type: String},
   role: {type: String, default:'user', enum:['user','editor','admin']}
-},
-{
-  toObject:{virtuals:true},
-  toJSON:{virtuals:true},
-});
-
-userSchema.virtual('roleCapabilities',{
-  ref: 'roleCapabilities',
-  localField: 'role',
-  foreignField: 'role',
-  justOne: true,
-});
-
-userSchema.pre('find', function() {
-  try {
-    this.populate('roleCapabilities');
-    console.log("MODEL.JS FINDING ROLE CAPABILITIES FOR THE USER: ", this);
+  },
+  {
+    toObject:{ virtuals:true },
+    toJSON:{ virtuals:true} ,
   }
-  catch (e) {
+);
+
+userSchema.virtual('acl', {
+  ref:'roles',
+  localField:'role',
+  foreignField:'role',
+  justOne:true,
+})
+
+userSchema.pre('findOne', function() {
+  try {
+    this.populate('acl');
+  }
+  catch(e) {
     console.error(e);
   }
 });
@@ -54,11 +43,6 @@ userSchema.pre('save', function(next) {
     })
     .catch( error => {throw error;} );
 });
-
-// TODO see video ~46:00
-// userSchema.methods.can = function(capability) {
-//   return capabilities[this.role].includes(capability);
-// };
 
 userSchema.statics.createFromOAuth = function(incoming) {
 
@@ -87,13 +71,7 @@ userSchema.statics.createFromOAuth = function(incoming) {
 userSchema.statics.authenticateBasic = function(auth) {
   let query = {username:auth.username};
   return this.findOne(query)
-
-    // .then(user => user && user.comparePassword(auth.password)) // TODO I think this is a bug: returns bool rathr than user.
-    .then(user => {
-      console.log('MODEL.JS AUTHENTICATE BASIC - user:' , user);
-      if(user && user.comparePassword(auth.password)) {
-        return user;
-      }})
+    .then(user => user && user.comparePassword(auth.password))
     .catch(console.error);
 };
 
@@ -118,7 +96,7 @@ userSchema.methods.generateToken = function() {
   let tokenData = {
     id:this._id,
     role:this.role,
-    capabilities:this.userCapabilities,
+    capabilities:this.capabilities,
   };
   return jwt.sign(tokenData, process.env.SECRET || 'changeit' );
 };
