@@ -6,6 +6,18 @@ https://codefellows-401-lab15.herokuapp.com/
 ## Travis
 [![Build Status](https://travis-ci.com/Kevinoh47/lab-15.svg?branch=working15)](https://travis-ci.com/Kevinoh47/lab-15)
 
+## Notes
+We have a users collection and a roles collection. We use a virtual join on the user.role = roles.role to add an ACL to check a user's permissions.
+
+Here is the output a mongodb query, db.roles.find():
+{ "_id" : ObjectId("5bf384f83f9ddfc765140019"), "role" : "admin", "capabilities" : [ "create", "read", "update", "delete" ] }
+{ "_id" : ObjectId("5bf388d63f9ddfc76514001a"), "role" : "editor", "capabilities" : [ "create", "read", "update" ] }
+{ "_id" : ObjectId("5bf389053f9ddfc76514001b"), "role" : "user", "capabilities" : [ "read" ] }
+{ "_id" : ObjectId("5bf39b2c3f9ddfc76514001c"), "role" : "superuser", "capabilities" : [ "create", "read", "update", "delete", "superuser" ] }
+
+We use auth middleware to protect the routes based on role capabilities. For example, the get /api/v1/:model/schema requires the "superuser" capability, which is only granted to the "superuser" role. Any user who wants to see a schema, must be currently assigned the "superuser" role.
+
+
 ## Submission Instructions
   * Follow the instructions in the "Lab Instructions" documentation in the reference folder of the class repository
 
