@@ -7,9 +7,30 @@ import {server} from '../../../src/app.js';
 
 import supergoose, { startDB, stopDB } from '../../supergoose.js';
 
+import auth from '../../../src/auth/middleware.js';
+import Users from '../../../src/auth/model.js';
+
 const mockRequest = supergoose(server);
 
-beforeAll(startDB);
+
+// TODO because routes are now protected by middleware, I believe we need to bring in users to configure tests with them...
+// beforeAll(startDB);
+// afterAll(stopDB);
+
+let users = {
+  admin: {username: 'admin', password: 'password', role: 'admin'},
+  editor: {username: 'editor', password: 'password', role: 'editor'},
+  user: {username: 'user', password: 'password', role: 'user'},
+};
+
+beforeAll(async (done) => {
+  await startDB();
+  const admin = await new Users(users.admin).save();
+  const editor = await new Users(users.editor).save();
+  const user = await new Users(users.user).save();
+  done()
+});
+
 afterAll(stopDB);
 
 // Unmock our model (might have been mocked by a previous test)

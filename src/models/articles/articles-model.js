@@ -5,7 +5,7 @@ import schema from './articles-schema.js';
 
 
 class Articles extends Model {
-
+  // Article-specific override for patch method
   patch(id, data) {
     return this.storage.find({_id:id})
       .then(results => {

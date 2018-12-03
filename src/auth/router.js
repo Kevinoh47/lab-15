@@ -5,6 +5,7 @@ import express from 'express';
 const authRouter = express.Router();
 
 import User from './model.js';
+import Roles from './roles.js';
 import auth from './middleware.js';
 import oauth from './lib/oauth.js';
 

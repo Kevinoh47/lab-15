@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "![cf](http://i.imgur.com/7v5ASc8.png) Access Control (ACL) ==========================================================",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -32,5 +32,13 @@
     "require-dir": "^1.1.0",
     "require-directory": "^2.1.1",
     "supertest": "^3.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kevinoh47/lab-15.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kevinoh47/lab-15/issues"
+  },
+  "homepage": "https://github.com/Kevinoh47/lab-15#readme"
 }

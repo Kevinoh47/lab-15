@@ -14,12 +14,12 @@ export default (capability) => {
       // BEARER Auth ... Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI
 
       switch(authType.toLowerCase()) {
-        case 'basic':
-          return _authBasic(authString);
-        case 'bearer':
-          return _authBearer(authString);
-        default:
-          return _authError();
+      case 'basic':
+        return _authBasic(authString);
+      case 'bearer':
+        return _authBearer(authString);
+      default:
+        return _authError();
       }
 
     } catch(e) {
@@ -33,7 +33,9 @@ export default (capability) => {
       let auth = {username,password};  // {username:"john", password:"mysecret"}
 
       return User.authenticateBasic(auth)
-        .then( user => _authenticate(user) );
+        .then( user => {
+          _authenticate(user) 
+        });
     }
 
     function _authBearer(authString) {
@@ -42,7 +44,7 @@ export default (capability) => {
     }
 
     function _authenticate(user) {
-      if ( user ) {
+      if ((user && (!capability)) || _authorize(user)) { 
         req.user = user;
         req.token = user.generateToken();
         next();
@@ -50,6 +52,13 @@ export default (capability) => {
       else {
         _authError();
       }
+    }
+
+    function _authorize(user) {
+      if (user && user.acl && user.acl.capabilities && user.acl.capabilities.includes(capability)) { 
+        return true;
+      }
+      return false;
     }
 
     function _authError() {

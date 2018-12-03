@@ -29,17 +29,18 @@ app.use(express.urlencoded({extended:true}));
 app.use(authRouter);
 app.use(apiRouter);
 
-app.get('/', auth(), (req,res) => {
-  res.send('hi');
+app.get('/', auth('read'), (req,res) => {
+  res.send('home route -- anyone with a read capability can access this route.');
 });
 
-app.get('/s', auth('create'), (req,res) => {
-  res.send('hi');
-});
+// TODO See v1.js for add and delete routes
+// app.get('/s', auth('create'), (req,res) => {
+//   res.send('creating/saving something...');
+// });
 
-app.get('/d', auth('delete'), (req,res) => {
-  res.send('hi');
-});
+// app.get('/d', auth('delete'), (req,res) => {
+//   res.send('deleting something... ');
+// });
 
 // Catchalls
 app.use(notFound);
