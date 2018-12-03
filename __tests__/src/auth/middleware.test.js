@@ -4,6 +4,7 @@ import { startDB, stopDB } from '../../supergoose.js';
 
 import auth from '../../../src/auth/middleware.js';
 import Users from '../../../src/auth/model.js';
+import roles from '../../../src/auth/roles.js';
 
 // beforeAll(startDB);
 
